@@ -1,8 +1,7 @@
 import networkx as nx
 import numpy as np
-from collections import deque
 
-__all__ = ['topological_info_content']
+__all__ = ['topological_info_content', 'vertex_orbits']
 
 def topological_info_content(graph):
     """
@@ -20,12 +19,13 @@ def topological_info_content(graph):
     """
     assert isinstance(graph, nx.Graph)
 
-    top = _get_topology(graph)
-    orbits = _get_orbits(top)
-    On = np.array([len(x) for x in orbits]) # orbits
-    pis = On/np.sum(On)
-    Iorb = - np.sum(pis * np.log2(pis)) # entropy
-    return Iorb
+    orbits = vertex_orbits(graph)
+    orbit_counts = np.array([len(x) for x in orbits]) # orbits
+    return entropy_from_count(orbit_counts)
+
+def entropy_from_count(counts):
+    p_counts = counts/np.sum(counts)
+    return - np.sum(p_counts * np.log2(p_counts))
 
 def _get_topology(graph):
     assert isinstance(graph, nx.Graph)
@@ -47,9 +47,18 @@ def _get_topology(graph):
         joined = np.rec.fromarrays([dist_vi, deg_vi], names=["dist", "deg"])
         joined.sort(order=["dist", "deg"]) # sort by dist then deg
         ans.append(joined)
+    # keys are nodes, values are a array of {dist,deg} to every other nodes
     return dict(zip(nodes, ans))
 
-def _get_orbits(topology):
+def vertex_orbits(graph):
+    """
+    vertex orbits:
+        The equivalence classes of the vertices of a graph G under
+        the action of the automorphisms.
+    """
+    assert isinstance(graph, nx.Graph)
+
+    topology = _get_topology(graph)
     nodes = list(topology.keys())
     orbits = [] # A list of list of nodes
     for node in nodes:
