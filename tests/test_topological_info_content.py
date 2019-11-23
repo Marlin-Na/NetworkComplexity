@@ -53,3 +53,14 @@ def test_vertex_orbits():
 
     graph = nx.generators.scale_free_graph(100)
     test_local(graph)
+
+    graph = nx.Graph()
+    graph.add_nodes_from(["A", "B", "C"])
+    graph.add_edges_from([("A", "B"), ("A", "C")])
+    assert vertex_orbits(graph) == [["A"], ["B", "C"]]
+
+def test_topological_info_content():
+    from networkcomplexity import topological_info_content
+
+    graph = nx.generators.complete_graph(10)
+    assert topological_info_content(graph) == 0
