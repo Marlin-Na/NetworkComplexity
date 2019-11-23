@@ -54,7 +54,8 @@ def _get_orbits(topology):
     orbits = [] # A list of list of nodes
     for node in nodes:
         found = False
-        # See if the node fit into the orbit
+        # See if the node fit into the orbit, i.e. having identical
+        # dist and deg with other nodes
         for orbit in orbits:
             orbit_sample_node = orbit[0]
             if np.all(topology[orbit_sample_node] == topology[node]):
