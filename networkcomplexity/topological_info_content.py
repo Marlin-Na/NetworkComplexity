@@ -50,17 +50,19 @@ def _get_topology(graph):
     return dict(zip(nodes, ans))
 
 def _get_orbits(topology):
-    rest = deque(topology.keys()) # The nodes
-    #top = list(topology.values())
-    erg = []
-    while len(rest):
-        rem = []
-        vi = rest.popleft()
-        erg_tmp = [vi]
-        for j in reversed(range(len(rest))):
-            if np.all(topology[vi] == topology[rest[j]]):
-                erg_tmp.append(rest[j])
-                del rest[j]
-        erg_tmp.sort()
-        erg.append(erg_tmp)
-    return erg
+    nodes = list(topology.keys())
+    orbits = [] # A list of list of nodes
+    for node in nodes:
+        found = False
+        # See if the node fit into the orbit
+        for orbit in orbits:
+            orbit_sample_node = orbit[0]
+            if np.all(topology[orbit_sample_node] == topology[node]):
+                orbit.append(node)
+                found = True
+                break
+        if not found:
+            orbits.append([node])
+    for orbit in orbits:
+        orbit.sort()
+    return orbits
