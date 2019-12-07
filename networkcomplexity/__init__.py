@@ -1,2 +1,3 @@
-from networkcomplexity.offdiagonal import offdiagonal
-from networkcomplexity.topological_info_content import topological_info_content
+from networkcomplexity.offdiagonal import *
+from networkcomplexity.topological_info_content import *
+from networkcomplexity.degree_entropy import *
