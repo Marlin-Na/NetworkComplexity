@@ -4,7 +4,7 @@ import networkx as nx
 def test_clique():
     ## Fully connected graph should have value zero
     graph = nx.generators.complete_graph(100)
-    nxc.degree_entropy(graph)
+    value = nxc.degree_entropy(graph)
     assert value == 0
 
 def test_simple():
