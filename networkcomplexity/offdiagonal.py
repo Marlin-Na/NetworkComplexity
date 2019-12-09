@@ -11,17 +11,10 @@ def offdiagonal(graph):
     
     assert isinstance(graph, nx.Graph)
 
-    deg = np.array(list(dict(graph.degree()).values()))
-    n = len(graph)
-    M = nx.adjacency_matrix(graph)
-
-    nr = max(deg) + 1
     # the degree correlation matrix
-    c_nodecor = np.zeros((nr, nr))
-    for l in range(n):
-        for p in range(n):
-            if M[l, p] != 0 and deg[p] >= deg[l]:
-                c_nodecor[deg[l], deg[p]] += 1
+    c_nodecor = _node_cor_mat(graph)
+    nr = c_nodecor.shape[0]
+    n = len(graph)
 
     # sum over upper-triangle "parallels" to the main diagonal
     a_offdiag = []
@@ -35,6 +28,20 @@ def offdiagonal(graph):
     where_not_zero = prob_a != 0
     sum_prob = np.sum(prob_a * np.log(prob_a, where=where_not_zero))
     return -sum_prob/np.log(n-1)
+
+def _node_cor_mat(graph):
+    deg = np.array(list(dict(graph.degree()).values()))
+    n = len(graph)
+    M = nx.adjacency_matrix(graph)
+
+    nr = max(deg) + 1
+    # the degree correlation matrix
+    c_nodecor = np.zeros((nr, nr))
+    for l in range(n):
+        for p in range(n):
+            if M[l, p] != 0 and deg[p] >= deg[l]:
+                c_nodecor[deg[l], deg[p]] += 1
+    return c_nodecor
 
 
 #graph = nx.generators.grid_2d_graph(40, 40)
